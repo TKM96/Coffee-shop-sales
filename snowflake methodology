@@ -1,0 +1,293 @@
+select * from coffee;
+--- replacing commas with a dot in the unit price
+update coffee
+set unit_price = replace(unit_price, ',', '.');
+
+
+---Time Buckets, Months and total per transaction
+select *,(unit_price * transaction_qty) as total_spent,
+case when transaction_time between '06:00:00' and '06:30:00' then '06:00-06:30'
+     when transaction_time between '06:30:01' and '07:00:00' then '06:30-07:00'
+     when transaction_time between '07:00:01' and '07:30:00' then '07:00-07:30'
+     when transaction_time between '07:30:01' and '08:00:00' then '07:30-08:00'
+     when transaction_time between '08:00:01' and '08:30:00' then '08:00-08:30'
+     when transaction_time between '08:30:01' and '09:00:00' then '08:30-09:00'
+     when transaction_time between '09:00:01' and '09:30:00' then '09:00-09:30'
+     when transaction_time between '09:30:01' and '10:00:00' then '09:30-10:00'
+     when transaction_time between '10:00:01' and '10:30:00' then '10:00-10:30'
+     when transaction_time between '10:30:01' and '11:00:00' then '10:30-11:00'
+     when transaction_time between '11:00:01' and '11:30:00' then '11:00-11:30'
+     when transaction_time between '11:30:01' and '12:00:00' then '11:30-12:00'
+     when transaction_time between '12:00:01' and '12:30:00' then '12:00-12:30'
+     when transaction_time between '12:30:01' and '13:00:00' then '12:30-13:00'
+     when transaction_time between '13:00:01' and '13:30:00' then '13:00-13:30'
+     when transaction_time between '13:30:01' and '14:00:00' then '13:30-14:00'
+     when transaction_time between '14:00:01' and '14:30:00' then '14:00-14:30'
+     when transaction_time between '14:30:01' and '15:00:00' then '14:30-15:00'
+     when transaction_time between '15:00:01' and '15:30:00' then '15:00-15:30'
+     when transaction_time between '15:30:01' and '16:00:00' then '15:30-16:00'
+     when transaction_time between '16:00:01' and '16:30:00' then '16:00-16:30'
+     when transaction_time between '16:30:01' and '17:00:00' then '16:30-17:00'
+     when transaction_time between '17:00:01' and '17:30:00' then '17:00-17:30'
+     when transaction_time between '17:30:01' and '18:00:00' then '17:30-18:00'
+     when transaction_time between '18:00:01' and '18:30:00' then '18:00-18:30'
+     when transaction_time between '18:30:01' and '19:00:00' then '18:30-19:00'
+     when transaction_time between '19:00:01' and '19:30:00' then '19:00-19:30'
+     when transaction_time between '19:30:01' and '20:00:00' then '19:30-20:00'
+     when transaction_time between '20:00:01' and '20:30:00' then '20:00-20:30'
+     when transaction_time between '20:30:01' and '21:00:00' then '20:30-21:00'
+end as Time_buckets,
+case    when transaction_date between '2023-01-01' and '2023-01-31' then 'Jan'
+        when transaction_date between '2023-02-01' and '2023-02-28' then 'Feb'
+        when transaction_date between '2023-03-01' and '2023-03-31' then 'Mar'
+        when transaction_date between '2023-04-01' and '2023-04-30' then 'Apr'
+        when transaction_date between '2023-05-01' and '2023-05-31' then 'May'
+        when transaction_date between '2023-06-01' and '2023-06-30' then 'Jun'
+end as Month_
+from coffee
+order by transaction_date,transaction_time;
+
+
+--- creating table with buckets columns
+create table bright_coffee as (select *,
+case when transaction_time between '06:00:00' and '06:30:00' then '06:00-06:30'
+     when transaction_time between '06:30:01' and '07:00:00' then '06:30-07:00'
+     when transaction_time between '07:00:01' and '07:30:00' then '07:00-07:30'
+     when transaction_time between '07:30:01' and '08:00:00' then '07:30-08:00'
+     when transaction_time between '08:00:01' and '08:30:00' then '08:00-08:30'
+     when transaction_time between '08:30:01' and '09:00:00' then '08:30-09:00'
+     when transaction_time between '09:00:01' and '09:30:00' then '09:00-09:30'
+     when transaction_time between '09:30:01' and '10:00:00' then '09:30-10:00'
+     when transaction_time between '10:00:01' and '10:30:00' then '10:00-10:30'
+     when transaction_time between '10:30:01' and '11:00:00' then '10:30-11:00'
+     when transaction_time between '11:00:01' and '11:30:00' then '11:00-11:30'
+     when transaction_time between '11:30:01' and '12:00:00' then '11:30-12:00'
+     when transaction_time between '12:00:01' and '12:30:00' then '12:00-12:30'
+     when transaction_time between '12:30:01' and '13:00:00' then '12:30-13:00'
+     when transaction_time between '13:00:01' and '13:30:00' then '13:00-13:30'
+     when transaction_time between '13:30:01' and '14:00:00' then '13:30-14:00'
+     when transaction_time between '14:00:01' and '14:30:00' then '14:00-14:30'
+     when transaction_time between '14:30:01' and '15:00:00' then '14:30-15:00'
+     when transaction_time between '15:00:01' and '15:30:00' then '15:00-15:30'
+     when transaction_time between '15:30:01' and '16:00:00' then '15:30-16:00'
+     when transaction_time between '16:00:01' and '16:30:00' then '16:00-16:30'
+     when transaction_time between '16:30:01' and '17:00:00' then '16:30-17:00'
+     when transaction_time between '17:00:01' and '17:30:00' then '17:00-17:30'
+     when transaction_time between '17:30:01' and '18:00:00' then '17:30-18:00'
+     when transaction_time between '18:00:01' and '18:30:00' then '18:00-18:30'
+     when transaction_time between '18:30:01' and '19:00:00' then '18:30-19:00'
+     when transaction_time between '19:00:01' and '19:30:00' then '19:00-19:30'
+     when transaction_time between '19:30:01' and '20:00:00' then '19:30-20:00'
+     when transaction_time between '20:00:01' and '20:30:00' then '20:00-20:30'
+     when transaction_time between '20:30:01' and '21:00:00' then '20:30-21:00'
+end as Time_buckets,
+case    when transaction_date between '2023-01-01' and '2023-01-31' then 'Jan'
+        when transaction_date between '2023-02-01' and '2023-02-28' then 'Feb'
+        when transaction_date between '2023-03-01' and '2023-03-31' then 'Mar'
+        when transaction_date between '2023-04-01' and '2023-04-30' then 'Apr'
+        when transaction_date between '2023-05-01' and '2023-05-31' then 'May'
+        when transaction_date between '2023-06-01' and '2023-06-30' then 'Jun'
+end as Month_
+from coffee);
+
+select * from bright_coffee;
+
+--- creating day column that will shown the transation date as date
+alter table bright_coffee
+add Day varchar(11);
+
+update bright_coffee
+set day = dayname(transaction_date);
+
+--- revenue performance from jan to jun
+select month_ , sum(transaction_total) revenue
+from bright_coffee
+group by month_
+order by case when month_ ='Jan' then 1
+              when month_ ='Feb' then 2
+              when month_ ='Mar' then 3
+              when month_ ='Apr' then 4
+              when month_ ='May' then 5
+              when month_ ='Jun' then 6
+              else 'no month'
+              end;
+
+--- total revenue per product type
+select product_type, sum(transaction_total) as revenue
+from bright_coffee
+group by product_type;
+
+--- top 5 peak time for sales, 
+select time_buckets, count(transaction_id) as total_sales
+from bright_coffee
+group by time_buckets
+order by 
+limit 5;
+
+--- 5 time buckets with lowest sales
+select time_buckets, count(transaction_id) as sales
+from bright_coffee
+group by time_buckets
+order by sales asc
+limit 5;
+
+--- total items per product category
+select product_category,sum(transaction_qty) as total_units
+from bright_coffee
+group by product_category
+order by total_units desc;
+
+--- 5 best selling product type
+select product_type, count(transaction_id) as total_sales
+from bright_coffee
+group by product_type
+order by total_sales desc
+limit 5;
+
+--- 5 WORST REVENUE GENERATING PRODUCTS
+select product_type, sum(transaction_total) revenue
+from bright_coffee
+group by product_type
+order by revenue
+limit 5;
+
+
+--- average sales per product type 
+select  product_type,avg(transaction_total) average_revenue
+from bright_coffee
+group by product_type
+order by average_revenue desc;
+
+
+--- 2 period moving average
+with ma as
+( select month_, sum(transaction_total) revenue
+from bright_coffee
+group by month_
+order by case when month_ ='Jan' then 1
+              when month_ ='Feb' then 2
+              when month_ ='Mar' then 3
+              when month_ ='Apr' then 4
+              when month_ ='May' then 5
+              when month_ ='Jun' then 6
+              else 'no month'
+              end)
+select month_ , revenue , avg(revenue) over (order by case when month_ ='Jan' then 1
+              when month_ ='Feb' then 2
+              when month_ ='Mar' then 3
+              when month_ ='Apr' then 4
+              when month_ ='May' then 5
+              when month_ ='Jun' then 6
+              else 'no month'
+              end rows between 1 preceding and current row) as moving_average
+from ma;
+
+
+
+
+--- store revenue per month
+select store_location, month_,sum(transaction_total) as revenue
+from bright_coffee
+group by store_location, month_
+order by case when month_ ='Jan' then 1
+              when month_ ='Feb' then 2
+              when month_ ='Mar' then 3
+              when month_ ='Apr' then 4
+              when month_ ='May' then 5
+              when month_ ='Jun' then 6
+              end ;
+
+--- sales moving average per month
+with sales_ma as
+( select month_, count(transaction_id) total_sales
+from bright_coffee
+group by month_
+order by case when month_ ='Jan' then 1
+              when month_ ='Feb' then 2
+              when month_ ='Mar' then 3
+              when month_ ='Apr' then 4
+              when month_ ='May' then 5
+              when month_ ='Jun' then 6
+              else 'no month'
+              end)
+select month_ , total_sales , avg(total_sales) over (order by case when month_ ='Jan' then 1
+              when month_ ='Feb' then 2
+              when month_ ='Mar' then 3
+              when month_ ='Apr' then 4
+              when month_ ='May' then 5
+              when month_ ='Jun' then 6
+              else 'no month'
+              end rows between 1 preceding and current row) as moving_average
+from sales_ma;
+
+SELECT month_ ,AVG(TOTAL_SALES) as avg_sales
+from (select month_, count(transaction_id) total_sales
+from bright_coffee
+group by month_
+order by case when month_ ='Jan' then 1
+              when month_ ='Feb' then 2
+              when month_ ='Mar' then 3
+              when month_ ='Apr' then 4
+              when month_ ='May' then 5
+              when month_ ='Jun' then 6
+              else 'no month'
+              end)
+group by month_
+order by case when month_ ='Jan' then 1
+              when month_ ='Feb' then 2
+              when month_ ='Mar' then 3
+              when month_ ='Apr' then 4
+              when month_ ='May' then 5
+              when month_ ='Jun' then 6
+              else 'no month'
+              end;
+
+--- top 5 revenue generating products
+select product_type, sum(transaction_total) revenue
+from bright_coffee
+group by product_type
+order by revenue desc
+limit 5;
+
+select COUNT(distinct product_type)
+from bright_coffee;
+
+---REVENUE FROM TOP 5 HIGHEST SELLING PRODUCTS
+SELECT SUM(TRANSACTION_QTY) TOTAL_UNITS
+FROM BRIGHT_COFFEE
+WHERE PRODUCT_TYPE IN ('Barista Espresso',
+'Brewed Chai tea',
+'Hot chocolate',
+'Gourmet brewed coffee',
+'Brewed Black tea');
+
+--- counting total sales from start to end of dataset
+select count(transaction_id) total_sales
+from bright_coffee;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
